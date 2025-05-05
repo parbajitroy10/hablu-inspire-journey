@@ -1,0 +1,10 @@
+
+{
+  "appId": "app.lovable.c2766a69dbc94396b91f0741dbf9cf78",
+  "appName": "hablu-inspire-journey",
+  "webDir": "dist",
+  "server": {
+    "url": "https://c2766a69-dbc9-4396-b91f-0741dbf9cf78.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  }
+}
