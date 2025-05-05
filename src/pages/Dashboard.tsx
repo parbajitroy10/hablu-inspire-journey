@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   getCategories, 
   getDailyQuote, 
@@ -8,12 +9,12 @@ import {
   calculateOverallProgress 
 } from '@/utils/data';
 import { ImprovementCategory, Goal, DailyQuote } from '@/types';
+import { getCurrentUser, setCurrentUser } from '@/utils/auth';
 import QuoteCard from '@/components/QuoteCard';
 import CategoryCard from '@/components/CategoryCard';
 import GoalItem from '@/components/GoalItem';
 import ProgressRing from '@/components/ProgressRing';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
 import { 
   ChevronRight, 
   User, 
@@ -46,10 +47,10 @@ const Dashboard: React.FC = () => {
     setQuote(dailyQuote);
     setOverallProgress(calculateOverallProgress(loadedCategories));
 
-    // Check if user has set a mood today from localStorage
-    const storedMood = localStorage.getItem('todayMood');
-    if (storedMood) {
-      setCurrentMood(storedMood);
+    // Check if user has set a mood today from currentUser
+    const user = getCurrentUser();
+    if (user?.currentMood) {
+      setCurrentMood(user.currentMood);
     }
   }, []);
   
@@ -57,7 +58,18 @@ const Dashboard: React.FC = () => {
 
   const handleMoodSelect = (mood: string) => {
     setCurrentMood(mood);
-    localStorage.setItem('todayMood', mood);
+    
+    // Update user mood in local storage
+    const user = getCurrentUser();
+    if (user) {
+      const updatedUser = {
+        ...user,
+        currentMood: mood as 'happy' | 'neutral' | 'sad' | 'excited' | 'tired',
+        lastCheckIn: new Date()
+      };
+      setCurrentUser(updatedUser);
+    }
+    
     toast.success(`Mood updated to ${mood}!`);
   };
   
@@ -70,15 +82,20 @@ const Dashboard: React.FC = () => {
     toast(completed ? "Goal completed! 🎉" : "Goal marked as pending");
   };
   
+  const handleCategoryClick = (categoryId: string) => {
+    navigate(`/mission/${categoryId}`);
+  };
+  
   return (
     <div className="pb-24">
       <div className="p-6 bg-gradient-to-b from-primary/10 to-background">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h1 className="text-2xl font-bold mb-1">Welcome, Hablu</h1>
+            <h1 className="text-2xl font-bold mb-1">Welcome, {getCurrentUser()?.name || 'User'}</h1>
             <p className="text-muted-foreground">Let's work on your missions today</p>
           </div>
-          <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-600 rounded-full flex items-center justify-center text-white">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-600 rounded-full flex items-center justify-center text-white"
+               onClick={() => navigate('/profile')}>
             <User size={20} />
           </div>
         </div>
@@ -137,7 +154,7 @@ const Dashboard: React.FC = () => {
             <CategoryCard 
               key={category.id} 
               category={category}
-              onClick={() => navigate(`/category/${category.id}`)}
+              onClick={() => handleCategoryClick(category.id)}
             />
           ))}
         </div>

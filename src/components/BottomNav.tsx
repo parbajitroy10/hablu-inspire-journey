@@ -6,7 +6,12 @@ import { Home, BarChart, List, Award, User } from 'lucide-react';
 
 const BottomNav: React.FC = () => {
   const location = useLocation();
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path === '/dashboard') {
+      return location.pathname === path || location.pathname.startsWith('/mission');
+    }
+    return location.pathname === path;
+  };
   
   const navItems = [
     { icon: <Home size={20} />, text: "Home", path: "/dashboard" },
@@ -17,7 +22,7 @@ const BottomNav: React.FC = () => {
   ];
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border flex justify-around p-2 z-10">
+    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border flex justify-around p-2 z-10 max-w-md mx-auto shadow-lg">
       {navItems.map((item) => (
         <Link 
           key={item.path} 

@@ -7,11 +7,13 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import AddGoalModal from '@/components/AddGoalModal';
 
 const Goals: React.FC = () => {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [categories, setCategories] = useState<ImprovementCategory[]>([]);
   const [activeTab, setActiveTab] = useState<string>("all");
+  const [isAddGoalModalOpen, setIsAddGoalModalOpen] = useState(false);
   
   useEffect(() => {
     const loadedGoals = getGoals();
@@ -30,6 +32,13 @@ const Goals: React.FC = () => {
     toast(completed ? "Goal completed! 🎉" : "Goal marked as pending");
   };
   
+  const handleAddGoal = (newGoal: Goal) => {
+    const updatedGoals = [...goals, newGoal];
+    setGoals(updatedGoals);
+    updateGoals(updatedGoals);
+    toast.success("New goal added!");
+  };
+  
   const filteredGoals = activeTab === "all" 
     ? goals 
     : activeTab === "completed"
@@ -42,7 +51,11 @@ const Goals: React.FC = () => {
     <div className="p-6 pb-24">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Goals</h1>
-        <Button size="sm" className="gap-1">
+        <Button 
+          size="sm" 
+          className="gap-1"
+          onClick={() => setIsAddGoalModalOpen(true)}
+        >
           <PlusCircle size={16} />
           <span>Add Goal</span>
         </Button>
@@ -73,6 +86,12 @@ const Goals: React.FC = () => {
           </div>
         </TabsContent>
       </Tabs>
+      
+      <AddGoalModal 
+        open={isAddGoalModalOpen}
+        onOpenChange={setIsAddGoalModalOpen}
+        onAddGoal={handleAddGoal}
+      />
     </div>
   );
 };

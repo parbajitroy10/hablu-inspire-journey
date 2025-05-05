@@ -62,3 +62,17 @@ export interface DailyTask {
   dueDate: string;
   priority: 'high' | 'medium' | 'low';
 }
+
+export interface ChatMessage {
+  id: string;
+  text: string;
+  sender: 'user' | 'ai';
+  timestamp: Date;
+}
+
+export interface AuthState {
+  isAuthenticated: boolean;
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+}
