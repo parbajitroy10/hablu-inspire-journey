@@ -10,6 +10,7 @@ import Goals from "./pages/Goals";
 import Progress from "./pages/Progress";
 import Achievements from "./pages/Achievements";
 import Profile from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
 import BottomNav from "./components/BottomNav";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
         <div className="max-w-md mx-auto bg-background min-h-screen relative">
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/goals" element={<Goals />} />
             <Route path="/progress" element={<Progress />} />
             <Route path="/achievements" element={<Achievements />} />
