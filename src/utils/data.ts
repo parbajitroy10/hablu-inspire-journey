@@ -173,7 +173,8 @@ const quotesList: DailyQuote[] = [
 // Get daily inspirational quote
 export const getDailyQuote = (): DailyQuote => {
   const today = new Date();
-  const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+  // Fix type error: Convert Date objects to numbers before arithmetic operation
+  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
   return quotesList[dayOfYear % quotesList.length];
 };
 

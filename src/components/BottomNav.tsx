@@ -9,7 +9,7 @@ const BottomNav: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
   
   const navItems = [
-    { icon: <Home size={20} />, text: "Home", path: "/" },
+    { icon: <Home size={20} />, text: "Home", path: "/dashboard" },
     { icon: <List size={20} />, text: "Goals", path: "/goals" },
     { icon: <BarChart size={20} />, text: "Progress", path: "/progress" },
     { icon: <Award size={20} />, text: "Achievements", path: "/achievements" },
