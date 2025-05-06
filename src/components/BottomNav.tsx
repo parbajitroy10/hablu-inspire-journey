@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
@@ -18,27 +19,27 @@ const BottomNav = () => {
     {
       path: '/dashboard',
       label: 'Dashboard',
-      icon: LayoutDashboard
+      icon: <LayoutDashboard size={20} />
     },
     {
       path: '/goals',
       label: 'Goals',
-      icon: CheckSquare
+      icon: <CheckSquare size={20} />
     },
     {
       path: '/progress',
       label: 'Progress',
-      icon: BarChart
+      icon: <BarChart size={20} />
     },
     {
       path: '/cgpa',
       label: 'CGPA',
-      icon: GraduationCap
+      icon: <GraduationCap size={20} />
     },
     {
       path: '/achievements',
       label: 'Achievements',
-      icon: Award
+      icon: <Award size={20} />
     }
   ];
   
