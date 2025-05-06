@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -8,7 +7,8 @@ import {
   getPendingGoals, 
   calculateOverallProgress,
   getGoalStats,
-  generateMotivationMessage
+  generateMotivationMessage,
+  updateGoals
 } from '@/utils/data';
 import { ImprovementCategory, Goal, DailyQuote } from '@/types';
 import { getCurrentUser, setCurrentUser } from '@/utils/auth';
