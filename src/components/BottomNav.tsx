@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BarChart, List, Award, User, LayoutDashboard, CheckSquare, GraduationCap } from 'lucide-react';
+import { BarChart, Award, LayoutDashboard, CheckSquare, GraduationCap, Calendar } from 'lucide-react';
 
 const BottomNav = () => {
   const location = useLocation();
@@ -27,9 +27,9 @@ const BottomNav = () => {
       icon: <CheckSquare size={20} />
     },
     {
-      path: '/progress',
-      label: 'Progress',
-      icon: <BarChart size={20} />
+      path: '/events',
+      label: 'Events',
+      icon: <Calendar size={20} />
     },
     {
       path: '/cgpa',

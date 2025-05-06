@@ -15,6 +15,7 @@ import AIAssistant from '@/components/AIAssistant';
 import { Toaster } from 'sonner';
 import { getCurrentUser } from '@/utils/auth';
 import CGPATrackerPage from "./pages/CGPATracker";
+import Events from './pages/Events';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -78,6 +79,11 @@ function App() {
             <Route path="/cgpa" element={
               <ProtectedRoute>
                 <CGPATrackerPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/events" element={
+              <ProtectedRoute>
+                <Events />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />
