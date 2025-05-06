@@ -16,6 +16,8 @@ export interface Goal {
   description: string;
   completed: boolean;
   dueDate?: string;
+  priority?: 'high' | 'medium' | 'low';
+  tags?: string[];
 }
 
 export interface Achievement {
@@ -24,6 +26,8 @@ export interface Achievement {
   description: string;
   icon: string;
   unlocked: boolean;
+  unlockedDate?: Date;
+  requirements?: string[];
 }
 
 export interface DailyQuote {
@@ -40,6 +44,20 @@ export interface User {
   overallProgress: number;
   currentMood?: 'happy' | 'neutral' | 'sad' | 'excited' | 'tired';
   lastCheckIn?: Date;
+  joinDate?: Date;
+  streak?: number;
+  points?: number;
+  level?: number;
+  socialLinks?: {
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+  };
+  preferences?: {
+    notifications: boolean;
+    darkMode: boolean;
+    language: string;
+  };
 }
 
 export interface Mission {
@@ -75,4 +93,30 @@ export interface AuthState {
   user: User | null;
   loading: boolean;
   error: string | null;
+}
+
+export interface UserGoalStat {
+  total: number;
+  completed: number;
+  pending: number;
+  dueToday: number;
+}
+
+export interface UserActivityLog {
+  id: string;
+  userId: string;
+  action: 'goal_completed' | 'goal_added' | 'mission_started' | 'achievement_unlocked';
+  timestamp: Date;
+  details: {
+    goalId?: string;
+    missionId?: string;
+    achievementId?: string;
+    description: string;
+  };
+}
+
+export interface UserStreak {
+  current: number;
+  longest: number;
+  lastActivity: Date;
 }

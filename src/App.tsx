@@ -19,16 +19,37 @@ import BottomNav from "./components/BottomNav";
 import AIAssistant from "./components/AIAssistant";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { isAuthenticated } from "./utils/auth";
+import Logo from "./components/Logo";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [authChecked, setAuthChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     // Check authentication status on app load
     setAuthChecked(true);
+    
+    // Simulate loading for splash screen effect
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
   }, []);
+  
+  if (isLoading) {
+    // Show animated splash screen
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-background to-primary/5">
+        <div className="animate-pulse">
+          <Logo size="lg" />
+        </div>
+        <p className="mt-6 text-muted-foreground animate-pulse">Loading your journey...</p>
+      </div>
+    );
+  }
   
   if (!authChecked) {
     // Show loading state until auth check is complete

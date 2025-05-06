@@ -1,5 +1,5 @@
 
-import { ImprovementCategory, Goal, Achievement, DailyQuote } from '../types';
+import { ImprovementCategory, Goal, Achievement, DailyQuote, User } from '../types';
 
 // Get data from local storage or return default values
 export const getLocalData = <T>(key: string, defaultValue: T): T => {
@@ -201,6 +201,28 @@ export const updateCategories = (categories: ImprovementCategory[]): void => {
 // Save goals updates
 export const updateGoals = (goals: Goal[]): void => {
   saveLocalData('inspire-goals', goals);
+  
+  // Automatically update category progress based on goals
+  const categories = getCategories();
+  const updatedCategories = categories.map(category => {
+    const categoryGoals = goals.filter(goal => goal.categoryId === category.id);
+    const totalGoals = categoryGoals.length;
+    
+    if (totalGoals === 0) return category;
+    
+    const completedGoals = categoryGoals.filter(goal => goal.completed).length;
+    const progress = Math.round((completedGoals / totalGoals) * 100);
+    
+    return {
+      ...category,
+      progress
+    };
+  });
+  
+  updateCategories(updatedCategories);
+  
+  // Update user overall progress
+  updateUserProgress();
 };
 
 // Calculate overall progress
@@ -209,6 +231,22 @@ export const calculateOverallProgress = (categories: ImprovementCategory[]): num
   
   const totalProgress = categories.reduce((sum, category) => sum + category.progress, 0);
   return Math.round(totalProgress / categories.length);
+};
+
+// Update user overall progress
+export const updateUserProgress = (): void => {
+  const user = getLocalData('inspire-user', null);
+  if (!user) return;
+  
+  const categories = getCategories();
+  const overallProgress = calculateOverallProgress(categories);
+  
+  const updatedUser = {
+    ...user,
+    overallProgress
+  };
+  
+  saveLocalData('inspire-user', updatedUser);
 };
 
 // Get pending goals (not completed and due soon)
@@ -224,4 +262,54 @@ export const getPendingGoals = (goals: Goal[], days: number = 7): Goal[] => {
     const dueDate = new Date(goal.dueDate);
     return dueDate <= future;
   });
+};
+
+// Generate motivation message based on user goals and progress
+export const generateMotivationMessage = (): string => {
+  const user = getLocalData('inspire-user', null);
+  const categories = getCategories();
+  const goals = getGoals();
+  
+  if (!user) return "Set your goals today and start your journey!";
+  
+  const pendingCount = getPendingGoals(goals).length;
+  const overallProgress = user.overallProgress || 0;
+  
+  // Get the category with lowest progress that has goals
+  const categoriesWithGoals = categories.filter(cat => 
+    goals.some(goal => goal.categoryId === cat.id)
+  );
+  
+  const lowestCategory = categoriesWithGoals.sort((a, b) => a.progress - b.progress)[0];
+  
+  if (pendingCount === 0) {
+    return "Great job! You've completed all your pending tasks. Add new goals to keep improving!";
+  }
+  
+  if (overallProgress < 30) {
+    return `You're just getting started! Focus on your ${lowestCategory?.name || 'goals'} to build momentum.`;
+  } else if (overallProgress < 60) {
+    return `You're making good progress! Keep working on your ${lowestCategory?.name || 'goals'} to reach the next level.`;
+  } else {
+    return "You're doing amazing! Keep up the great work to reach your full potential!";
+  }
+};
+
+// Get stat for specific goal type (completed goals, ongoing, etc)
+export const getGoalStats = () => {
+  const goals = getGoals();
+  const total = goals.length;
+  const completed = goals.filter(goal => goal.completed).length;
+  const pending = total - completed;
+  const dueToday = goals.filter(goal => {
+    if (goal.completed) return false;
+    if (!goal.dueDate) return false;
+    
+    const today = new Date();
+    const dueDate = new Date(goal.dueDate);
+    
+    return dueDate.toDateString() === today.toDateString();
+  }).length;
+  
+  return { total, completed, pending, dueToday };
 };
