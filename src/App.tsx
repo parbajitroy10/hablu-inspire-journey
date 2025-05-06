@@ -1,118 +1,66 @@
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from '@/components/theme-provider';
+import Index from '@/pages/Index';
+import Auth from '@/pages/Auth';
+import Dashboard from '@/pages/Dashboard';
+import Goals from '@/pages/Goals';
+import Progress from '@/pages/Progress';
+import MissionDetail from '@/pages/MissionDetail';
+import Achievements from '@/pages/Achievements';
+import Profile from '@/pages/Profile';
+import NotFound from '@/pages/NotFound';
+import AIAssistant from '@/components/AIAssistant';
+import { Toaster } from 'sonner';
+import { getCurrentUser } from '@/utils/auth';
+import CGPATrackerPage from "./pages/CGPATracker";
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Goals from "./pages/Goals";
-import Progress from "./pages/Progress";
-import Achievements from "./pages/Achievements";
-import Profile from "./pages/Profile";
-import Dashboard from "./pages/Dashboard";
-import Auth from "./pages/Auth";
-import MissionDetail from "./pages/MissionDetail";
-import BottomNav from "./components/BottomNav";
-import AIAssistant from "./components/AIAssistant";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { isAuthenticated } from "./utils/auth";
-import Logo from "./components/Logo";
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-const queryClient = new QueryClient();
-
-const App = () => {
-  const [authChecked, setAuthChecked] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  
   useEffect(() => {
-    // Check authentication status on app load
-    setAuthChecked(true);
-    
-    // Simulate loading for splash screen effect
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    
-    return () => clearTimeout(timer);
+    const user = getCurrentUser();
+    setIsAuthenticated(!!user);
+    setLoading(false);
   }, []);
-  
-  if (isLoading) {
-    // Show animated splash screen
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-background to-primary/5">
-        <div className="animate-pulse">
-          <Logo size="lg" />
-        </div>
-        <p className="mt-6 text-muted-foreground animate-pulse">Loading your journey...</p>
-      </div>
-    );
-  }
-  
-  if (!authChecked) {
-    // Show loading state until auth check is complete
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
-  }
+
+  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+
+    if (!isAuthenticated) {
+      return <Navigate to="/auth" />;
+    }
+
+    return <>{children}</>;
+  };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="inspireMe-theme">
-        <TooltipProvider>
+    <div className="App">
+      <BrowserRouter>
+        <ThemeProvider defaultTheme="light" storageKey="inspire-theme">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/goals" element={<Goals />} />
+              <Route path="/progress" element={<Progress />} />
+              <Route path="/mission/:categoryId" element={<MissionDetail />} />
+              <Route path="/achievements" element={<Achievements />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/cgpa" element={<CGPATrackerPage />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <AIAssistant />
           <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <div className="max-w-md mx-auto bg-background min-h-screen relative">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/goals" element={
-                  <ProtectedRoute>
-                    <Goals />
-                  </ProtectedRoute>
-                } />
-                <Route path="/mission/:id" element={
-                  <ProtectedRoute>
-                    <MissionDetail />
-                  </ProtectedRoute>
-                } />
-                <Route path="/progress" element={
-                  <ProtectedRoute>
-                    <Progress />
-                  </ProtectedRoute>
-                } />
-                <Route path="/achievements" element={
-                  <ProtectedRoute>
-                    <Achievements />
-                  </ProtectedRoute>
-                } />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              
-              {/* Only show bottom nav and AI assistant on protected routes */}
-              {isAuthenticated() && (
-                <>
-                  <BottomNav />
-                  <AIAssistant />
-                </>
-              )}
-            </div>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </div>
   );
-};
+}
 
 export default App;

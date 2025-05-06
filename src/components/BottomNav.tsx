@@ -1,24 +1,45 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BarChart, List, Award, User } from 'lucide-react';
+import { Home, BarChart, List, Award, User, LayoutDashboard, CheckSquare, GraduationCap } from 'lucide-react';
 
-const BottomNav: React.FC = () => {
+const BottomNav = () => {
   const location = useLocation();
+  const currentPath = location.pathname;
+  
   const isActive = (path: string) => {
     if (path === '/dashboard') {
-      return location.pathname === path || location.pathname.startsWith('/mission');
+      return currentPath === path || currentPath.startsWith('/mission');
     }
-    return location.pathname === path;
+    return currentPath === path;
   };
   
   const navItems = [
-    { icon: <Home size={20} />, text: "Home", path: "/dashboard" },
-    { icon: <List size={20} />, text: "Goals", path: "/goals" },
-    { icon: <BarChart size={20} />, text: "Progress", path: "/progress" },
-    { icon: <Award size={20} />, text: "Achievements", path: "/achievements" },
-    { icon: <User size={20} />, text: "Profile", path: "/profile" }
+    {
+      path: '/dashboard',
+      label: 'Dashboard',
+      icon: LayoutDashboard
+    },
+    {
+      path: '/goals',
+      label: 'Goals',
+      icon: CheckSquare
+    },
+    {
+      path: '/progress',
+      label: 'Progress',
+      icon: BarChart
+    },
+    {
+      path: '/cgpa',
+      label: 'CGPA',
+      icon: GraduationCap
+    },
+    {
+      path: '/achievements',
+      label: 'Achievements',
+      icon: Award
+    }
   ];
   
   return (
@@ -35,7 +56,7 @@ const BottomNav: React.FC = () => {
           )}
         >
           {item.icon}
-          <span className="text-xs mt-1">{item.text}</span>
+          <span className="text-xs mt-1">{item.label}</span>
         </Link>
       ))}
     </div>
