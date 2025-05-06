@@ -3,6 +3,7 @@ import React from 'react';
 import CGPATracker from '@/components/CGPATracker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { GraduationCap, Award, TrendingUp } from 'lucide-react';
+import BottomNav from '@/components/BottomNav';
 
 const CGPATrackerPage: React.FC = () => {
   return (
@@ -13,6 +14,8 @@ const CGPATrackerPage: React.FC = () => {
       <div className="mb-6">
         <CGPATracker />
       </div>
+      
+      <BottomNav />
     </div>
   );
 };
